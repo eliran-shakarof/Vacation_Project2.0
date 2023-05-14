@@ -1,0 +1,17 @@
+html,body,#root{
+  margin:0;
+  padding: 0;
+  text-align: center;
+  height:100%;
+  overflow: auto;
+}
+
+
+/* Possible Futures 
+    https://mui.com/material-ui/react-app-bar/ -> Look for the bar with dropdown list on profile
+    https://mui.com/material-ui/react-bottom-navigation/ -> Navigation with icons
+    https://mui.com/material-ui/react-stepper/ -> For register with steps
+    https://mui.com/material-ui/react-tabs/ -> for categories
+
+    https://mui.com/material-ui/react-menu/
+*/

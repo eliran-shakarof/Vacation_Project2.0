@@ -1,0 +1,21 @@
+.Login {
+    text-align: left;
+}
+
+.loginBox {
+    width:400px;
+    margin:50px auto;
+    padding: 10px;
+}
+
+.headerBox{
+    display: flex;
+    justify-content: center;
+}
+
+.myInvalidColor {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    margin-left: 2px;
+}

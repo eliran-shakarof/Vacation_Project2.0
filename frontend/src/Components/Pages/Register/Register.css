@@ -1,0 +1,20 @@
+.RegisterPage {
+    text-align: left;
+}
+
+.registerBox {
+    width:400px;
+    margin:50px auto;
+    padding: 10px;
+}
+
+.headerBox{
+    display: flex;
+    justify-content: center;
+}
+
+.myInvalidColor {
+    color: red;
+    font-size: 0.8rem;
+    text-align: left;
+}
