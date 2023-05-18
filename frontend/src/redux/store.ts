@@ -1,21 +1,17 @@
-import { combineReducers } from "redux";
-import { userReducer } from "./userState";
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { authReducer } from "./auth-slice";
-import { userReducerNew } from "./user-slice";
+import { userReducer } from "./user-slice";
 import { vacationsReducer } from "./vacation-slice";
 import { FollowingReducer } from "./following-slice";
 
 
-const reducers = combineReducers({ userState: userReducer });
 //export const store = configureStore({ reducer: reducers });
 
 export const store = configureStore({ 
     reducer:{
         auth: authReducer,
-        userState: userReducer,
-        user: userReducerNew,
+        user: userReducer,
         vacationsList: vacationsReducer,
         followingList: FollowingReducer,
     }

@@ -2,13 +2,12 @@ import { Grid,Container, Pagination, PaginationItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "./UserHome.css";
 import { useEffect, useState,ChangeEvent } from "react";
-import { userRole } from "../../../redux/userState";
 import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Box } from "@mui/system";
-import { selectUserState } from "../../../redux/user-slice";
+import { selectUserState, userRole } from "../../../redux/user-slice";
 import { selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
 import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
 

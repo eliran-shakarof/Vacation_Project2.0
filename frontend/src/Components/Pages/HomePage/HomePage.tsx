@@ -1,12 +1,11 @@
 import "./HomePage.css";
-import { userRole } from "../../../redux/userState";
 import { useState, useEffect } from "react";
 import { useAppSelector } from "../../../redux/store";
 import GuestHome from "../GuestHome/GuestHome";
 import { Box } from "@mui/material";
 import AdminHome from "../AdminHome/AdminHome";
 import UserHome from "../UserHome/UserHome";
-import { selectUserState } from "../../../redux/user-slice";
+import { selectUserState, userRole } from "../../../redux/user-slice";
 
 
 function HomePage(): JSX.Element {

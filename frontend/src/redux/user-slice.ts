@@ -53,4 +53,4 @@ export const userSlice = createSlice({
 
 export const selectUserState = (state: RootState) => state.user;
 export const { userLogin, userLogout, updateToken } = userSlice.actions;
-export const userReducerNew = userSlice.reducer;
+export const userReducer = userSlice.reducer;

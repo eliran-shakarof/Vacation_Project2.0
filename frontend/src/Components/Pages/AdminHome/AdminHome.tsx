@@ -29,7 +29,7 @@ function AdminHome(): JSX.Element {
     }
     
     dispatch(vacationsListAsync());
-  }, [navigate,userState,dispatch]);
+  }, [navigate,userState.userRole,dispatch]);
 
 
   const deleteVacation = (vacation_id: number,imageName: string)=> {

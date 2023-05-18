@@ -4,13 +4,12 @@ import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
 import { useNavigate } from "react-router-dom";
 import { Grid,Container, Box, Pagination } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
-import { userRole } from "../../../redux/userState";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PaginationItem from "@mui/material/PaginationItem";
 import Typography from "@mui/material/Typography";
 import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
-import { selectUserState } from "../../../redux/user-slice";
+import { selectUserState, userRole } from "../../../redux/user-slice";
 
 const PER_PAGE = 6;
 

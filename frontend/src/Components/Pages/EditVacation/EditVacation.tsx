@@ -1,12 +1,10 @@
 import "./EditVacation.css";
 import { useState, useEffect } from "react";
 import { Vacation } from "../../../Models/vacation";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import {Typography,TextField,Button,Grid} from '@mui/material';
-import { store, useAppDispatch, useAppSelector } from "../../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
-import Urls from "../../../Utils/Urls";
 import { selectUserState, userRole } from "../../../redux/user-slice";
 import { useNavigate } from "react-router-dom";
 import { editVacationAsync } from "../../../redux/vacation-slice";
@@ -23,8 +21,7 @@ function EditVacation(props:any): JSX.Element {
         if (userState.userRole !== userRole.User) {
             navigate("/")
         }
-        
-      }, [navigate,userState]);
+    }, [navigate,userState]);
     
     const {
         register,

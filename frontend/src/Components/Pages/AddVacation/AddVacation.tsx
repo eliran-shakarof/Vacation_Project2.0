@@ -9,8 +9,7 @@ import Grid from "@mui/material/Grid";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
-import { userRole } from "../../../redux/userState";
-import { selectUserState } from "../../../redux/user-slice";
+import { selectUserState, userRole } from "../../../redux/user-slice";
 import { addNewVacationAsync } from "../../../redux/vacation-slice";
 
 function AddVacation(): JSX.Element {
