@@ -32,7 +32,6 @@ export const getFollowListAsync = createAsyncThunk('following/all_for', async (u
 export const addNewFollowAsync = createAsyncThunk('following/add', async (newFollow:WithCallback<Following>, { dispatch }) => {
     try{
         const response = await followingApiRequest.addNewFollow(newFollow);
-        //@ts-ignore
         dispatch(increaseVacationFollow({vacation_id: newFollow.vacation_id}));
         return response;
     }catch(err:any){
@@ -43,8 +42,7 @@ export const addNewFollowAsync = createAsyncThunk('following/add', async (newFol
 
 export const deleteFollowAsync = createAsyncThunk('following/delete', async (follow:WithCallback<Following>, { dispatch }) => {
     try{
-        const response = await followingApiRequest.deleteFollow(follow);
-        //@ts-ignore
+        await followingApiRequest.deleteFollow(follow);
         dispatch(decreaseVacationFollow({vacation_id: follow.vacation_id}));
         return follow;
     }catch(err:any){

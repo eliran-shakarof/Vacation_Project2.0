@@ -1,5 +1,4 @@
 import { Following } from "../../Models/following";
-import axios from "axios";
 import JWTaxios from "../axiosUtil/JWTaxios";
 
 const getAllFollowingFor = async (userName: string): Promise<any> =>{

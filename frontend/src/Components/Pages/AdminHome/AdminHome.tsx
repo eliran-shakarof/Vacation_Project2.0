@@ -5,41 +5,42 @@ import { NavLink,useNavigate } from "react-router-dom";
 import { useEffect, useState,ChangeEvent } from "react";
 import axios from "axios";
 import {Button,Grid,Container, Pagination, Box, PaginationItem} from "@mui/material";
-import { store } from "../../../redux/store";
+import { store, useAppDispatch, useAppSelector } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
 import { userRole } from "../../../redux/userState";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Urls from "../../../Utils/Urls";
+import { selectUserState } from "../../../redux/user-slice";
+import { selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
 
 const PER_PAGE = 6;
 
 function AdminHome(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const userState = useAppSelector(selectUserState);
+  const { vacationsList } = useAppSelector(selectVacationsState);
+
   const [vacations, setVacations] = useState<Vacation[]>([]);
-  const [currToken, setCurrToken] = useState(store.getState().userState.userToken);
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(0); 
-  const pageCount = Math.ceil(vacations.length / PER_PAGE);
+  const pageCount = Math.ceil(vacationsList.length / PER_PAGE);
   const offset = currentPage * PER_PAGE;
 
-  store.subscribe(() => {
-     setCurrToken(store.getState().userState.userToken);
-    });
-
   useEffect(() => {
-    if (store.getState().userState.userRole !== userRole.Admin) {
-      navigate("/")
+    if (userState.userRole !== userRole.User) {
+        navigate("/")
     }
     
-    axios.get(`${Urls.serverUrl}/vacations/all`)
-         .then((response) => setVacations(response.data));
-  }, [navigate]);
+    dispatch(vacationsListAsync());
+  }, [navigate,userState,dispatch]);
+
 
   const deleteVacation = (cardId: number,imageName: string)=> {
       try{
           axios.post(`${Urls.serverUrl}/vacations/delete/${cardId}`,{data:{imageName}}, {
-            headers: {"authorization": `${currToken}`}
+            headers: {"authorization": `${userState.userToken}`}
           })
           .then(() =>{
               setVacations(vacations.filter(vac => (vac.vacation_id !== cardId)));    
@@ -54,7 +55,8 @@ function AdminHome(): JSX.Element {
     setCurrentPage(page - 1);
   };
 
-  const currentPageData = vacations.slice(offset, offset + PER_PAGE)
+
+  const currentPageData = vacationsList.slice(offset, offset + PER_PAGE)
       .map((card) => (
       <Grid item key={card.vacation_id} xs={12} sm={6} md={4}>
         <AdminVacationCard cardDetails={card} deleteVacationFunction={deleteVacation}/>

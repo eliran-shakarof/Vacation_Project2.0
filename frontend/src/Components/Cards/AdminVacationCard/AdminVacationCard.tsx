@@ -9,7 +9,6 @@ import VacationCard from "../VacationCard/VacationCard";
 
 
 function AdminVacationCard(props:any): JSX.Element {
-    const [vacation,setVacation] = useState<Vacation>(props.cardDetails)
     const [open, setOpen] = useState(false); 
     const handleClickOpen  = () => {setOpen(true)};
     const handleClose = () => setOpen(false);  
@@ -30,11 +29,11 @@ function AdminVacationCard(props:any): JSX.Element {
 
     return (
         <div className="AdminVacationCard">
-            <VacationCard cardDetails={vacation} theIcons={adminIcons(vacation)}/>
+            <VacationCard cardDetails={props.cardDetails} theIcons={adminIcons(props.cardDetails)}/>
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogContent>
-                    <EditVacation vacationDetails={vacation} setVacationFunction={setVacation} handleCloseFunction={handleClose}/>
+                    <EditVacation vacationDetails={props.cardDetails} setVacationFunction={props.cardDetails} handleCloseFunction={handleClose}/>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="text" onClick={handleClose}>Cancel</Button>

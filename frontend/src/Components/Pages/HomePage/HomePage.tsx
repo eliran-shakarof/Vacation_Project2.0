@@ -10,8 +10,7 @@ import { selectUserState } from "../../../redux/user-slice";
 
 
 function HomePage(): JSX.Element {
-    const userState = useAppSelector(selectUserState);
-  
+    const userState = useAppSelector(selectUserState); 
     const [currUserRole, setCurrUserRole] = useState(userState.userRole);
 
     useEffect(()=>{

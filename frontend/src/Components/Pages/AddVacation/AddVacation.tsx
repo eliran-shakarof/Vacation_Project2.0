@@ -1,5 +1,4 @@
 import "./AddVacation.css";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -8,14 +7,16 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { Button } from "@mui/material";
-import { store } from "../../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
 import { userRole } from "../../../redux/userState";
-import Urls from "../../../Utils/Urls";
+import { selectUserState } from "../../../redux/user-slice";
+import { addNewVacationAsync } from "../../../redux/vacation-slice";
 
 function AddVacation(): JSX.Element {
-    const [currToken, setCurrToken] = useState(store.getState().userState.userToken);
-    const [currUserRole, setCurrUserRole] = useState(store.getState().userState.userRole);
+    const dispatch = useAppDispatch();
+    const userState = useAppSelector(selectUserState);
+
     
     const {
         register,
@@ -25,18 +26,13 @@ function AddVacation(): JSX.Element {
 
     const [file, setFile] = useState();
     const navigate = useNavigate();
-    
-  
-    store.subscribe(() => {
-        setCurrUserRole(store.getState().userState.userRole);
-        setCurrToken(store.getState().userState.userToken);
-      });
+
 
     useEffect(() => {
-        if (currUserRole !== userRole.Admin) {
+        if (userState.userRole !== userRole.Admin) {
           navigate("/")
         }
-      }, [navigate,currUserRole]);
+      }, [navigate,userState.userRole]);
     
     const checkVacationDetails = (vacation: Vacation) =>{
         if((new Date(vacation.start_date) > new Date(vacation.end_date))){
@@ -48,20 +44,10 @@ function AddVacation(): JSX.Element {
     const send = async (newVacation: Vacation) => {    
         let newVacationError:string = checkVacationDetails(newVacation);
         if(newVacationError === ""){
-            try{
-                newVacation.image = file;
-                newVacation.sumFollowers = 0;
-                axios.post(`${Urls.serverUrl}/vacations/add`,newVacation ,{
-                    headers: {
-                    "authorization": `${currToken}`,
-                    "Content-Type": "multipart/form-data"
-                    }
-                })
-                .then(res=> navigate("/AdminHome"))
-                .catch(err =>{notify.error(`${err.response.data}`)})
-            }catch(err:any){
-                console.log(err);
-            }
+            newVacation.image = file;
+            newVacation.sumFollowers = 0;
+           dispatch(addNewVacationAsync({...newVacation, successCallback: addingSuccess}));
+            
         }else{
             notify.error(newVacationError);
         }
@@ -72,6 +58,10 @@ function AddVacation(): JSX.Element {
         setFile(e.target.files[0])
     }
     
+    const addingSuccess = () =>{
+        navigate("/AdminHome");
+    }
+
     return (
         <div className="AddVacation Box">
             <form onSubmit={handleSubmit(send)}>
@@ -201,3 +191,18 @@ function AddVacation(): JSX.Element {
 }
 
 export default AddVacation;
+
+// try{
+//     newVacation.image = file;
+//     newVacation.sumFollowers = 0;
+//     axios.post(`${Urls.serverUrl}/vacations/add`,newVacation ,{
+//         headers: {
+//         "authorization": `${userState.userToken}`,
+//         "Content-Type": "multipart/form-data"
+//         }
+//     })
+//     .then(res=> navigate("/AdminHome"))
+//     .catch(err =>{notify.error(`${err.response.data}`)})
+// }catch(err:any){
+//     console.log(err);
+// }

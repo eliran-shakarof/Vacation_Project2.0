@@ -12,7 +12,6 @@ import { selectUserState } from "../../../redux/user-slice";
 import { selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
 import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
 
-
 const PER_PAGE = 6;
 
 function UserHome(): JSX.Element {
@@ -52,8 +51,6 @@ function UserHome(): JSX.Element {
       setCurrentPage(page - 1);
     };
 
-    console.log(vacationsList);
-    console.log(followingList);
     return (
       <div className="UserHome">
         <Container sx={{ py: 5 }} maxWidth="md">

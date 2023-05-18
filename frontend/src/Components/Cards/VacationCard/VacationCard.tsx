@@ -22,7 +22,7 @@ function VacationCard(props:any): JSX.Element {
                     sx={{height:40}}
                 />
 
-                <Typography variant="body1" sx={{height:150,ml:1,mr:1,mt:1,mb:1}}color="text.secondary">
+                <Typography variant="body1" sx={{ height:150,ml:1,mr:1,mt:1,mb:1 }} color="text.secondary">
                     {props.cardDetails.description}
                 </Typography>
 

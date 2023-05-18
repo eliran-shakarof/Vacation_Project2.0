@@ -1,64 +1,49 @@
 import "./Following.css";
 import { useEffect, useState,ChangeEvent } from "react";
-import axios from "axios";
-import { Vacation } from "../../../Models/vacation";
 import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
-import { useNavigate,NavLink } from "react-router-dom";
-import { Grid,Container,Button, Box, Pagination } from "@mui/material";
-import notify from "../../../Utils/Notify";
-import { store } from "../../../redux/store";
+import { useNavigate } from "react-router-dom";
+import { Grid,Container, Box, Pagination } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { userRole } from "../../../redux/userState";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PaginationItem from "@mui/material/PaginationItem";
 import Typography from "@mui/material/Typography";
-import Urls from "../../../Utils/Urls";
-
+import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
+import { selectUserState } from "../../../redux/user-slice";
 
 const PER_PAGE = 6;
 
 function Following(): JSX.Element {
-    const [likeVacations, setLikeVacations] = useState<Vacation[]>([]);
+    const dispatch = useAppDispatch();
+    const userState = useAppSelector(selectUserState);
+    const { followingList } = useAppSelector(selectFollowingState);
     const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(0); 
-    const pageCount = Math.ceil(likeVacations.length / PER_PAGE);
+    const pageCount = Math.ceil(followingList.length / PER_PAGE);
     const offset = currentPage * PER_PAGE;
 
-    const [currUserRole, setCurrUserRole] = useState(store.getState().userState.userRole);
-    
-    store.subscribe(() => {
-        setCurrUserRole(store.getState().userState.userRole);
-      });
-
     useEffect(() => {
-        const currUserName = store.getState().userState.userName;
-        if (currUserRole !== userRole.User) {
+        if (userState.userRole !== userRole.User) {
           navigate("/")
         }
 
-        try{
-          axios.get(`${Urls.serverUrl}/following/all_for/${currUserName}`,{
-            headers: {"authorization": `${store.getState().userState.userToken}`}
-          })
-          .then((response) => {setLikeVacations(response.data)})
-        }catch(err){
-          console.log(err);
-        }
-      }, [navigate,currUserRole]);
+        dispatch(getFollowListAsync(userState.userName));
+      }, [navigate,userState,dispatch]);
 
       const isLiked = (vacation_id: number):boolean =>{
-        return likeVacations.filter(item => item.vacation_id === vacation_id).length > 0;
+        return followingList.filter(item => item.vacation_id === vacation_id).length > 0;
     }
     
     const handleChangePage = (event: ChangeEvent<unknown> | null, page: number): void => {
       setCurrentPage(page - 1);
     };
 
-   const currentPageData = likeVacations.slice(offset, offset + PER_PAGE)
+   const currentPageData = followingList.slice(offset, offset + PER_PAGE)
       .map((card) => (
         <Grid item key={card.vacation_id} xs={12} sm={6} md={4}>
-            <UserVacationCard cardDetails={card} cardsLikes={isLiked(card.vacation_id)}/>
+            <UserVacationCard cardDetails={{...card}} cardsLikes={isLiked(card.vacation_id)}/>
         </Grid>
       ))
 

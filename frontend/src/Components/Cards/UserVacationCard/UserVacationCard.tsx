@@ -1,5 +1,4 @@
 import "./UserVacationCard.css";
-import { useState,useEffect } from "react";
 import { IconButton } from "@mui/material";
 import VacationCard from "../VacationCard/VacationCard";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -16,7 +15,6 @@ function UserVacationCard(props:any): JSX.Element {
 
     const getLiked = () =>{        
         const follow = new Following(0, userState.userName, props.cardDetails.vacation_id);
-
         if(props.cardsLikes === false){   
             //Be Liked
             dispatch(addNewFollowAsync({...follow}));
@@ -25,16 +23,6 @@ function UserVacationCard(props:any): JSX.Element {
             dispatch(deleteFollowAsync({...follow}));     
         }    
     }    
-
-
-    // const likedFailed = () =>{
-    //     dispatch(decreaseSumLikes());
-    // }
-
-    // const unLikedFailed = () =>{
-    //     dispatch(increaseSumLikes());
-    // }
-
 
     const userIcons = () =>{
       return(
@@ -46,7 +34,7 @@ function UserVacationCard(props:any): JSX.Element {
 
     return (
         <div className="UserVacationCard">
-			<VacationCard cardDetails={props.cardDetails} theIcons={userIcons()}/>
+			    <VacationCard cardDetails={props.cardDetails} theIcons={userIcons()}/>
         </div>
     );
 }
