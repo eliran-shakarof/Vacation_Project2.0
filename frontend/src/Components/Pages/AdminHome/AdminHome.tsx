@@ -1,18 +1,14 @@
 import "./AdminHome.css";
-import { Vacation } from "../../../Models/vacation";
 import AdminVacationCard from "../../Cards/AdminVacationCard/AdminVacationCard";
 import { NavLink,useNavigate } from "react-router-dom";
 import { useEffect, useState,ChangeEvent } from "react";
-import axios from "axios";
 import {Button,Grid,Container, Pagination, Box, PaginationItem} from "@mui/material";
-import { store, useAppDispatch, useAppSelector } from "../../../redux/store";
-import notify from "../../../Utils/Notify";
-import { userRole } from "../../../redux/userState";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { userRole } from "../../../redux/user-slice";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import Urls from "../../../Utils/Urls";
 import { selectUserState } from "../../../redux/user-slice";
-import { selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
+import { deleteVacationAsync, selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
 
 const PER_PAGE = 6;
 
@@ -21,7 +17,6 @@ function AdminHome(): JSX.Element {
   const userState = useAppSelector(selectUserState);
   const { vacationsList } = useAppSelector(selectVacationsState);
 
-  const [vacations, setVacations] = useState<Vacation[]>([]);
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(0); 
@@ -37,18 +32,8 @@ function AdminHome(): JSX.Element {
   }, [navigate,userState,dispatch]);
 
 
-  const deleteVacation = (cardId: number,imageName: string)=> {
-      try{
-          axios.post(`${Urls.serverUrl}/vacations/delete/${cardId}`,{data:{imageName}}, {
-            headers: {"authorization": `${userState.userToken}`}
-          })
-          .then(() =>{
-              setVacations(vacations.filter(vac => (vac.vacation_id !== cardId)));    
-            }
-          ).catch(err =>{notify.error(`${err.response.status} ${err.response.data}`)})
-      }catch(err){
-        console.log(err);
-      }
+  const deleteVacation = (vacation_id: number,imageName: string)=> {
+      dispatch(deleteVacationAsync({vacation_id: vacation_id,imageName: imageName}));
   }
 
   const handleChangePage = (event: ChangeEvent<unknown> | null, page: number): void => {

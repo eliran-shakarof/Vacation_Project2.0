@@ -6,6 +6,11 @@ import notify from "../Utils/Notify";
 import { RootState } from "./store";
 import { WithCallback } from "../Models/callback";
 
+export interface deleteVacation {
+    vacation_id: number;
+    imageName: string;
+}
+
 export interface VacationsState {
     vacationsList: Vacation[]
     error?: string
@@ -27,7 +32,7 @@ export const vacationsListAsync = createAsyncThunk('vacations/all', async () => 
     }
   })
 
-export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newVacation: WithCallback<Vacation>, { dispatch }) => {
+export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newVacation: WithCallback<Vacation>) => {
     try{
         const response = await vacationApiRequest.addNewVacation(newVacation);
         newVacation.successCallback?.();
@@ -37,6 +42,25 @@ export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newV
     }
   })
 
+  export const editVacationAsync = createAsyncThunk('vacations/edit', async (vacation: WithCallback<Vacation>) => {
+    try{
+        const response = await vacationApiRequest.editVacation(vacation);
+        vacation.successCallback?.();
+        return response
+    }catch(err:any){
+        notify.error(`${err.response.data}`);
+    }
+  })
+
+  export const deleteVacationAsync = createAsyncThunk('vacations/delete', async (deleteVacation: deleteVacation) => {
+    try{
+        await vacationApiRequest.deleteVacation(deleteVacation.vacation_id,deleteVacation.imageName);
+        return deleteVacation.vacation_id;
+    }catch(err:any){
+        console.log(err);
+        notify.error(`${err.response.data}`);
+    }
+  })
 
 
   export const vacationsSlice = createSlice({
@@ -72,15 +96,49 @@ export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newV
         })
         .addCase(addNewVacationAsync.fulfilled, (state, action) => {
             state.status = RequestStatus.Idle
-            state.vacationsList.push(action.payload);
+            state.vacationsList = [...state.vacationsList,action.payload];
         })
         .addCase(addNewVacationAsync.rejected, (state, action) => {
+          state.error = action.error.message
+          state.status = RequestStatus.Failed
+        })
+        .addCase(editVacationAsync.pending, state => {
+          state.status = RequestStatus.Loading
+        })
+        .addCase(editVacationAsync.fulfilled, (state, action:any) => {
+            state.status = RequestStatus.Idle
+            ///////////payload -> hand updated vacation
+            state.vacationsList.map(vacation => {
+              if(vacation.vacation_id === action.payload.vacation_id){
+                vacation.description = action.payload.description;
+                vacation.destination = action.payload.destination;
+                vacation.price = action.payload.price;
+                vacation.imageName = action.payload.imageName;
+                vacation.start_date = action.payload.start_date;
+                vacation.end_date = action.payload.end_date;
+              }
+            })
+        })
+        .addCase(editVacationAsync.rejected, (state, action) => {
+          state.error = action.error.message
+          state.status = RequestStatus.Failed
+        })
+        .addCase(deleteVacationAsync.pending, state => {
+          state.status = RequestStatus.Loading
+        })
+        .addCase(deleteVacationAsync.fulfilled, (state, action:any) => {
+            state.status = RequestStatus.Idle
+            console.log(action.payload);
+            state.vacationsList = state.vacationsList.filter((vacation)=> vacation.vacation_id !== action.payload);
+        })
+        .addCase(deleteVacationAsync.rejected, (state, action) => {
           state.error = action.error.message
           state.status = RequestStatus.Failed
         })
     },
   })
 
+  
   
 export const selectVacationsState = (state: RootState) => state.vacationsList;
 export const { increaseVacationFollow, decreaseVacationFollow } = vacationsSlice.actions;

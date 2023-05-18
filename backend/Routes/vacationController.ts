@@ -64,7 +64,7 @@ router.put(Urls.updateVacationURL, [verifyToken, verifyAdmin] ,async (request: R
 router.post(Urls.deleteVacationURL, [verifyToken, verifyAdmin] ,async (request: Request, response: Response, next: NextFunction) => {
   try{
     const id = +request.params.id;
-    const imageName = request.body.data.imageName;
+    const imageName = request.body.imageName;
     safeDelete("./images/" + imageName);
     response.status(204).json(await vacationLogic.deleteVacation(id))
   }catch(err){

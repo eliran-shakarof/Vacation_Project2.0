@@ -13,19 +13,19 @@ const addNewVacation = async (newVacation: Vacation): Promise<any> =>{
     return axiosResponse.data;
 }
 
-const updateVacation = async (vacation: Vacation): Promise<any> =>{
+const editVacation = async (vacation: Vacation): Promise<any> =>{
     const axiosResponse = await JWTaxios.put(`/vacations/update/${vacation.vacation_id}`, vacation);
     return axiosResponse.data;
 }
 
 const deleteVacation = async (cardId: number,imageName: string): Promise<any> =>{
-    const axiosResponse = await JWTaxios.post(`/vacations/delete${cardId}`,{data:{imageName}});
+    const axiosResponse = await JWTaxios.post(`/vacations/delete/${cardId}`,{data:{imageName}});
     return axiosResponse.data;
 }
 
 export const vacationApiRequest = {
     getAllVacations,
     addNewVacation,
-    updateVacation,
+    editVacation,
     deleteVacation
 }

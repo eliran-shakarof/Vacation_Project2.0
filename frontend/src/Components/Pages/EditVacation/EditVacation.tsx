@@ -1,23 +1,31 @@
 import "./EditVacation.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Vacation } from "../../../Models/vacation";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import {Typography,TextField,Button,Grid} from '@mui/material';
-import { store } from "../../../redux/store";
+import { store, useAppDispatch, useAppSelector } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
 import Urls from "../../../Utils/Urls";
+import { selectUserState, userRole } from "../../../redux/user-slice";
+import { useNavigate } from "react-router-dom";
+import { editVacationAsync } from "../../../redux/vacation-slice";
 
 
 function EditVacation(props:any): JSX.Element {
+    const dispatch = useAppDispatch();
+    const userState = useAppSelector(selectUserState);
+    const navigate = useNavigate();
+
     const [file, setFile] = useState();
     
-    const [currToken, setCurrToken] = useState(store.getState().userState.userToken);
+    useEffect(() => {
+        if (userState.userRole !== userRole.User) {
+            navigate("/")
+        }
+        
+      }, [navigate,userState]);
     
-    store.subscribe(() => {
-       setCurrToken(store.getState().userState.userToken);
-      });
-  
     const {
         register,
         handleSubmit,
@@ -34,32 +42,20 @@ function EditVacation(props:any): JSX.Element {
     const send = async (updateVacation: Vacation) => {  
         let updateVacationError:string = checkVacationDetails(updateVacation);
         if(updateVacationError === ""){
-            try{
                 updateVacation.vacation_id = props.vacationDetails.vacation_id;
                 updateVacation.image = file;
                 updateVacation.imageName = props.vacationDetails.imageName;
                 updateVacation.sumFollowers = props.vacationDetails.sumFollowers;
 
-                axios.put(`${Urls.serverUrl}/vacations/update/${updateVacation.vacation_id}`,updateVacation ,{
-                    headers: {
-                        "authorization": `${currToken}`,
-                        "Content-Type": "multipart/form-data"
-                        }
-                    })
-                .then(()=>{axios.get(`${Urls.serverUrl}/vacations/by_id/${updateVacation.vacation_id}`)
-                    .then(response => {
-                        props.setVacationFunction(response.data[0]);
-                        props.handleCloseFunction();
-                    })
-                })
-                .catch(err =>{notify.error(`${err.response.status} ${err.response.data}`)})
-            }catch(err:any){
-                console.log(err);
-            }
+                dispatch(editVacationAsync({...updateVacation, successCallback: editSuccess}))
         }else{
             notify.error(updateVacationError);
         }
      }
+
+     const editSuccess = () =>{
+        props.handleCloseFunction();
+    }
 
     const handleFile = (e: any) => {
         e.preventDefault();

@@ -74,7 +74,6 @@ export const followingSlice = createSlice({
             state.status = RequestStatus.Loading
         })
         .addCase(addNewFollowAsync.fulfilled, (state, action) => {
-            console.log(action);
             state.status = RequestStatus.Idle
             state.followingList = [...state.followingList,action.payload];
         })
