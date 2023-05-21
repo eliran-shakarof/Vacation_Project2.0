@@ -1,28 +1,17 @@
 import "./EditVacation.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Vacation } from "../../../Models/vacation";
 import { useForm } from "react-hook-form";
 import {Typography,TextField,Button,Grid} from '@mui/material';
-import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { useAppDispatch } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
-import { selectUserState, userRole } from "../../../redux/user-slice";
-import { useNavigate } from "react-router-dom";
 import { editVacationAsync } from "../../../redux/vacation-slice";
-
 
 function EditVacation(props:any): JSX.Element {
     const dispatch = useAppDispatch();
-    const userState = useAppSelector(selectUserState);
-    const navigate = useNavigate();
     const today = new Date().toISOString().split('T')[0]; // Get today's date in the format "YYYY-MM-DD"
     
     const [file, setFile] = useState();
-    
-    useEffect(() => {
-        if (userState.userRole !== userRole.User) {
-            navigate("/")
-        }
-    }, [navigate,userState]);
     
     const {
         register,

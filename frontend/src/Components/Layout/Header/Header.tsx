@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./Header.css";
-import { AppBar, Badge, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, Button, Toolbar, Typography } from "@mui/material";
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useState, useEffect } from "react";
@@ -12,18 +12,15 @@ import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { selectUserState, userLogout } from "../../../redux/user-slice";
 import { selectFollowingState } from "../../../redux/following-slice";
 
-
 function Header(): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
     const { followingList } = useAppSelector(selectFollowingState);
     const [currUserRole, setCurrUserRole] = useState(userState.userRole);
-   // const [sumLikes,setSumLikes] = useState(userState.sumLikes);
     const [firstName,setFirstName] = useState(userState.firstName);
 
     useEffect(()=>{
         setCurrUserRole(userState.userRole);
-       // setSumLikes(userState.sumLikes);
         setFirstName(userState.firstName);
     },[userState])
 
@@ -106,14 +103,3 @@ function Header(): JSX.Element {
 } 
 
 export default Header;
-
-
-   // const [currUserRole, setCurrUserRole] = useState(store.getState().userState.userRole);
-    // const [sumLikes,setSumLikes] = useState(store.getState().userState.sumLikes);
-    // const [firstName,setFirstName] = useState(store.getState().userState.firstName);
-
-    // store.subscribe(() => {
-    //     setCurrUserRole(store.getState().userState.userRole);
-    //     setSumLikes(store.getState().userState.sumLikes);
-    //     setFirstName(store.getState().userState.firstName)
-    //   });

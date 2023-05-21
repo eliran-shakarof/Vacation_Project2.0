@@ -1,7 +1,6 @@
 import "./Following.css";
 import { useEffect, useState,ChangeEvent } from "react";
 import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
-import { useNavigate } from "react-router-dom";
 import { Grid,Container, Box, Pagination } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -9,7 +8,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PaginationItem from "@mui/material/PaginationItem";
 import Typography from "@mui/material/Typography";
 import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
-import { selectUserState, userRole } from "../../../redux/user-slice";
+import { selectUserState } from "../../../redux/user-slice";
 
 const PER_PAGE = 6;
 
@@ -17,19 +16,14 @@ function Following(): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
     const { followingList } = useAppSelector(selectFollowingState);
-    const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(0); 
     const pageCount = Math.ceil(followingList.length / PER_PAGE);
     const offset = currentPage * PER_PAGE;
 
     useEffect(() => {
-        if (userState.userRole !== userRole.User) {
-          navigate("/")
-        }
-
         dispatch(getFollowListAsync(userState.userName));
-      }, [navigate,userState,dispatch]);
+      }, [dispatch]);
 
       const isLiked = (vacation_id: number):boolean =>{
         return followingList.filter(item => item.vacation_id === vacation_id).length > 0;

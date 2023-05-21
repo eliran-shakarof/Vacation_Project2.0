@@ -1,5 +1,4 @@
 import { Grid,Container, Pagination, PaginationItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import "./UserHome.css";
 import { useEffect, useState,ChangeEvent } from "react";
 import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
@@ -7,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Box } from "@mui/system";
-import { selectUserState, userRole } from "../../../redux/user-slice";
+import { selectUserState } from "../../../redux/user-slice";
 import { selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
 import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
 
@@ -19,20 +18,14 @@ function UserHome(): JSX.Element {
    const { vacationsList } = useAppSelector(selectVacationsState);
    const { followingList } = useAppSelector(selectFollowingState);
 
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); 
   const pageCount = Math.ceil(vacationsList.length / PER_PAGE);
   const offset = currentPage * PER_PAGE;
  
     useEffect(() => {
-      if (userState.userRole !== userRole.User) {
-        navigate("/")
-      }
-
       dispatch(vacationsListAsync());
       dispatch(getFollowListAsync(userState.userName));
-
-    }, [navigate,userState,dispatch]);
+    }, [userState.userName,dispatch]);
 
 
     const isLiked = (vacation_id: number):boolean =>{

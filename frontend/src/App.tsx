@@ -22,7 +22,7 @@ function App() {
     if(localStorage.getItem("userToken") && !userState.userToken){    
       dispatch(relogAsync({failureCallback: failureRelog}))
     }
-  },[navigate])
+  },[navigate,dispatch,userState.userToken])
 
   const failureRelog = () =>{  
       handleOpen();

@@ -1,5 +1,5 @@
 import "./AddVacation.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Vacation } from "../../../Models/vacation";
@@ -7,14 +7,12 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { Button } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { useAppDispatch } from "../../../redux/store";
 import notify from "../../../Utils/Notify";
-import { selectUserState, userRole } from "../../../redux/user-slice";
 import { addNewVacationAsync } from "../../../redux/vacation-slice";
 
 function AddVacation(): JSX.Element {
     const dispatch = useAppDispatch();
-    const userState = useAppSelector(selectUserState);
     const today = new Date().toISOString().split('T')[0]; // Get today's date in the format "YYYY-MM-DD"
     
     const {
@@ -27,13 +25,6 @@ function AddVacation(): JSX.Element {
     const [file, setFile] = useState();
     const navigate = useNavigate();
 
-
-    useEffect(() => {
-        if (userState.userRole !== userRole.Admin) {
-          navigate("/")
-        }
-      }, [navigate,userState.userRole]);
-    
     const checkVacationDetails = (vacation: Vacation) =>{
         if((new Date(vacation.start_date) > new Date(vacation.end_date))){
             return "The start date cannot be after the end date!";

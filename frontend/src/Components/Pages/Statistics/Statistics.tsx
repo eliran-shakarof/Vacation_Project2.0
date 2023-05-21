@@ -1,29 +1,16 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
-import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import "./Statistics.css";
-import { useNavigate } from "react-router-dom";
 import { useAppSelector } from '../../../redux/store';
-import { userRole } from '../../../redux/user-slice';
 import Box from '@mui/material/Box';
-import { selectUserState } from '../../../redux/user-slice';
 import { selectVacationsState } from '../../../redux/vacation-slice';
 
 ChartJS.register( CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend );
 
 function Statistics(): JSX.Element {
-
-    const userState = useAppSelector(selectUserState);
     const { vacationsList } = useAppSelector(selectVacationsState);
 
     const vacations = vacationsList.filter((item:any) => item.sumFollowers > 0);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-      if (userState.userRole !== userRole.Admin) {
-        navigate("/")
-      }
-    }, [navigate,userState.userRole]);
 
     const data = {
         labels: vacations.map(vacation => vacation.destination),

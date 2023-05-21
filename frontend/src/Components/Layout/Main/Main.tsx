@@ -8,8 +8,10 @@ import Following from "../../Pages/Following/Following";
 import Register from "../../Pages/Register/Register";
 import AddVacation from "../../Pages/AddVacation/AddVacation";
 import HomePage from "../../Pages/HomePage/HomePage";
-import Page404 from "../../Pages/Page404/Page404";
+import Page404 from "../../Pages/ErrorPages/Page404/Page404";
 import Statistics from "../../Pages/Statistics/Statistics";
+import { ProtectedAdminRoleRoute } from "../../routes/protectedAdminRoleRoute";
+import Forbidden from "../../Pages/ErrorPages/Forbidden/Forbidden";
 
 function Main(): JSX.Element {
     return (
@@ -17,13 +19,21 @@ function Main(): JSX.Element {
 			<Routes>
                 <Route path="/Login" element={<Login/>}/>
                 <Route path="/Register" element={<Register/>}/>
-                <Route path="/Following" element={<Following/>}/>
-                <Route path="/GuestHome" element={<GuestHome/>}/>
-                <Route path="/UserHome" element={<UserHome/>}/>
-                <Route path="/AdminHome" element={<AdminHome/>}/>
-                <Route path="/AddVacation" element={<AddVacation/>}/>
-                <Route path="/Statistics" element={<Statistics/>}/>
                 <Route path="/" element={<HomePage/>}/>
+                
+                <Route path="/" element={<ProtectedAdminRoleRoute />}>
+                    <Route path="/GuestHome" element={<GuestHome/>}/>
+                    <Route path="/UserHome" element={<UserHome/>}/>
+                    <Route path="/Following" element={<Following/>}/>
+                </Route> 
+
+                <Route path="/" element={<ProtectedAdminRoleRoute />}>
+                    <Route path="/AdminHome" element={<AdminHome/>}/>
+                    <Route path="/AddVacation" element={<AddVacation/>}/>
+                    <Route path="/Statistics" element={<Statistics/>}/>            
+                </Route> 
+
+                <Route path="/forbidden" element={<Forbidden/>}/>
                 <Route path="*" element={<Page404/>}/>
             </Routes>
         </div>
