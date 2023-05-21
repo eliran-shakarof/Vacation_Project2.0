@@ -74,8 +74,10 @@ function RegisterPage(): JSX.Element {
                                 }
                             })}
                             onBlur={() => trigger("first_name")}
+                            error={!!errors.user_name}
+                            helperText={errors.user_name?.message}
                         />
-                        {errors.first_name && <p className="myInvalidColor">{errors.first_name.message}</p>}
+                        {/* {errors.first_name && <p className="myInvalidColor">{errors.first_name.message}</p>} */}
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
@@ -96,8 +98,10 @@ function RegisterPage(): JSX.Element {
                                 }
                             })}
                             onBlur={() => trigger("last_name")}
+                            error={!!errors.last_name}
+                            helperText={errors.last_name?.message}
                         />
-                        {errors.last_name && <p className="myInvalidColor">{errors.last_name.message}</p>}
+                        {/* {errors.last_name && <p className="myInvalidColor">{errors.last_name.message}</p>} */}
                     </Grid>
 
                     <Grid item xs={12}>
@@ -115,8 +119,10 @@ function RegisterPage(): JSX.Element {
                                     }
                                 })}
                                 onBlur={() => trigger("user_name")}
+                                error={!!errors.user_name}
+                                helperText={errors.user_name?.message}
                         />
-                        {errors.user_name && <p className="myInvalidColor">{errors.user_name.message}</p>}
+                        {/* {errors.user_name && <p className="myInvalidColor">{errors.user_name.message}</p>} */}
                     </Grid>
 
                     <Grid item xs={12}>
@@ -147,8 +153,10 @@ function RegisterPage(): JSX.Element {
                                 }
                             })}
                             onBlur={() => trigger("password")}   
+                            error={!!errors.password}
+                            helperText={errors.password?.message}
                         />
-                        {errors.password && <p className="myInvalidColor">{errors.password.message}</p>}
+                        {/* {errors.password && <p className="myInvalidColor">{errors.password.message}</p>} */}
                     </Grid>
 
                     <Grid item xs={12}>
@@ -161,9 +169,10 @@ function RegisterPage(): JSX.Element {
                                     validate: (value: any) =>
                                     value === password ? undefined : "* The passwords do not match!"
                             })}
-
+                            error={!!errors.confirmPassword}
+                            helperText={errors.confirmPassword?.message}
                         />
-                        {errors.confirmPassword && <p className="myInvalidColor">{errors.confirmPassword.message}</p>}
+                        {/* {errors.confirmPassword && <p className="myInvalidColor">{errors.confirmPassword.message}</p>} */}
                     </Grid>
                 </Grid>
 

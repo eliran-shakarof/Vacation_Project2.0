@@ -61,8 +61,10 @@ function Login(): JSX.Element {
                     }
                   })}
                   onBlur={() => trigger("user_name")}
+                  error={!!errors.user_name}
+                  helperText={errors.user_name?.message}
                 />
-              {errors.user_name && <p className="myInvalidColor">{errors.user_name.message}</p>}
+               {/* {errors.user_name && <p className="myInvalidColor">{errors.user_name.message}</p>} */}
 
               <TextField 
                   margin="normal" 
@@ -88,8 +90,10 @@ function Login(): JSX.Element {
                     }
                   })}
                   onBlur={() => trigger("password")}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
                 />
-              {errors.password && <p className="myInvalidColor">{errors.password.message}</p>}
+              {/* {errors.password && <p className="myInvalidColor">{errors.password.message}</p>} */}
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Sign In
