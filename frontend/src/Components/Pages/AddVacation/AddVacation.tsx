@@ -15,12 +15,13 @@ import { addNewVacationAsync } from "../../../redux/vacation-slice";
 function AddVacation(): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
-
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in the format "YYYY-MM-DD"
     
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors },
+        trigger
       } = useForm<Vacation>();
 
     const [file, setFile] = useState();
@@ -39,6 +40,19 @@ function AddVacation(): JSX.Element {
         }
         return "";
     }
+
+    const validateImage = (file: FileList) => {
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+    
+        if (!file || file.length === 0) {
+          return "* Please select an image file.";
+        }
+        const selectedFile = file[0];
+        const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
+        if (!allowedExtensions.includes(fileExtension || "")) {
+          return "* Invalid file format. Only JPG, JPEG, PNG, and GIF formats are allowed.";
+        }   
+      };
     
     const send = async (newVacation: Vacation) => {    
         let newVacationError:string = checkVacationDetails(newVacation);
@@ -69,26 +83,27 @@ function AddVacation(): JSX.Element {
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={12}>
-                        <TextField
-                                required
+                        <TextField        
                                 fullWidth
                                 id="destination"
                                 label="Enter a destination"
                                 autoFocus
                                 inputProps={{ maxLength: 25 }}
                                 {...register("destination",{
-                                    required: true,
+                                    required: "* Destination is required!",
                                     maxLength: {
                                         value: 25,
-                                        message: "Destination need to be less than 25 chars!"
+                                        message: "* Destination need to be less than 25 chars!"
                                     }
                                 })}
+                                onBlur={() => trigger("destination")}
+                                error={!!errors.destination}
+                                helperText={errors.destination?.message}
                             />
-                            {errors.destination && <p className="myValidColor">{errors.destination.message}</p>}
+                            {/* {errors.destination && <p className="myInvalidColor">{errors.destination.message}</p>} */}
                     </Grid>
                     <Grid item xs={12} sm={12}>
-                        <TextField
-                            required
+                        <TextField 
                             fullWidth
                             id="description"
                             label="Enter a description"
@@ -97,18 +112,20 @@ function AddVacation(): JSX.Element {
                             multiline
                             inputProps={{ maxLength: 190 }}
                             {...register("description",{
-                                required:true,
+                                required: "* Description is required!",
                                 maxLength: {
                                     value: 190,
-                                    message: "Destination need to be less than 190 chars!"
+                                    message: "* Description need to be less than 190 chars!"
                                 }
                             })}
+                            onBlur={() => trigger("description")}
+                            error={!!errors.description}
+                            helperText={errors.description?.message}
                         />
-                        {errors.description && <p className="myValidColor">{errors.description.message}</p>}
+                        {/* {errors.description && <p className="myInvalidColor">{errors.description.message}</p>} */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
+                        <TextField 
                             fullWidth
                             id="start_date"
                             label="Start Date"
@@ -116,14 +133,21 @@ function AddVacation(): JSX.Element {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{       
+                                min: today,
+                            }}
+                            
                             {...register("start_date",{
-                                required:true
-                            })}
+                                required: "* Start date is required!"
+                            })}      
+                            onBlur={() => trigger("start_date")}
+                            error={!!errors.start_date}
+                            helperText={errors.start_date?.message}
                         />    
+                        {/* {errors.start_date && <p className="myInvalidColor">{errors.start_date.message}</p>} */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
+                        <TextField   
                             fullWidth
                             id="end_date"
                             label="End Date"
@@ -131,34 +155,52 @@ function AddVacation(): JSX.Element {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{       
+                                min: today,
+                            }}
                             {...register("end_date",{
-                                required:true
+                                required: "* End date is required!"
                             })}
+                            onBlur={() => trigger("end_date")}
+                            error={!!errors.end_date}
+                            helperText={errors.end_date?.message}
                         />    
+                       {/* {errors.end_date && <p className="myInvalidColor">{errors.end_date.message}</p>} */}
                     </Grid>
                     <Grid item xs={8}>
                         <TextField
-                                required                                
                                 type="file"
                                 id="image"
                                 label="Upload a file" 
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                onChange={handleFile}
+                                {...register("image", {
+                                    validate: validateImage,
+                                  })}
+                                onChange={handleFile}  
+                                error={!!errors.image}
+                                helperText={errors.image && <span>{errors.image.message?.toString()}</span>}    
                         />    
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField
-                            required
+                        <TextField  
                             fullWidth
                             type="number"
                             id="price"
                             label="Enter a Price"
                             {...register("price",{
-                                required:true
+                                required: "* Price is required!",
+                                min:{
+                                    value: 1,
+                                    message: "* Price can't be negative or zero!"
+                                }
                             })}
+                            onBlur={() => trigger("price")}
+                            error={!!errors.price}
+                            helperText={errors.price?.message}
                         />
+                        {/* {errors.price && <p className="myInvalidColor">{errors.price.message}</p>} */}
                     </Grid>
                     <Grid item xs={6}>
                         <TextField
@@ -190,18 +232,3 @@ function AddVacation(): JSX.Element {
 }
 
 export default AddVacation;
-
-// try{
-//     newVacation.image = file;
-//     newVacation.sumFollowers = 0;
-//     axios.post(`${Urls.serverUrl}/vacations/add`,newVacation ,{
-//         headers: {
-//         "authorization": `${userState.userToken}`,
-//         "Content-Type": "multipart/form-data"
-//         }
-//     })
-//     .then(res=> navigate("/AdminHome"))
-//     .catch(err =>{notify.error(`${err.response.data}`)})
-// }catch(err:any){
-//     console.log(err);
-// }

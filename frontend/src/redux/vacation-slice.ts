@@ -73,7 +73,6 @@ export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newV
       },
       decreaseVacationFollow: (state,action) => {
         let index = state.vacationsList.findIndex(item => item.vacation_id === action.payload.vacation_id);
-        console.log(index +"!!!")
         state.vacationsList[index].sumFollowers -= 1;
      },
     },

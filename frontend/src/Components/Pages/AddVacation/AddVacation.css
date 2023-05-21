@@ -10,6 +10,9 @@
     padding: 10px;
 }
 
-.myValidColor {
+.myInvalidColor {
     color: red;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    margin-left: 2px;
 }

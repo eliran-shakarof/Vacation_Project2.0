@@ -14,7 +14,8 @@ function EditVacation(props:any): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
     const navigate = useNavigate();
-
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in the format "YYYY-MM-DD"
+    
     const [file, setFile] = useState();
     
     useEffect(() => {
@@ -26,7 +27,8 @@ function EditVacation(props:any): JSX.Element {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors },
+        trigger
       } = useForm<Vacation>();
 
     const checkVacationDetails = (vacation: Vacation) =>{
@@ -35,6 +37,17 @@ function EditVacation(props:any): JSX.Element {
         }
         return "";
     }
+
+    const validateImage = (file: FileList) => {
+        if(file.length === 0) return;
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+    
+        const selectedFile = file[0];
+        const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
+        if (!allowedExtensions.includes(fileExtension || "")) {
+          return "* Invalid file format. Only JPG, JPEG, PNG, and GIF formats are allowed.";
+        }   
+      };
 
     const send = async (updateVacation: Vacation) => {  
         let updateVacationError:string = checkVacationDetails(updateVacation);
@@ -79,25 +92,25 @@ function EditVacation(props:any): JSX.Element {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={12}>
                         <TextField
-                                required
                                 fullWidth
                                 id="destination"
                                 label="Enter a destination"
                                 defaultValue={props.vacationDetails.destination}
                                 inputProps={{ maxLength: 25 }}
                                 {...register("destination",{
-                                    required: true,
+                                    required: "* Destination is required!",
                                     maxLength: {
                                         value: 25,
-                                        message: "Destination need to be less than 25 chars!"
+                                        message: "* Destination need to be less than 25 chars!"
                                     }
                                 })}
+                                onBlur={() => trigger("destination")}
+                                error={!!errors.destination}
+                                helperText={errors.destination?.message}
                             />
-                            {errors.destination && <p className="myValidColor">{errors.destination.message}</p>}
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
-                            required
                             fullWidth
                             id="description"
                             label="Enter a description"
@@ -106,15 +119,17 @@ function EditVacation(props:any): JSX.Element {
                             multiline
                             inputProps={{ maxLength: 190 }}
                             defaultValue={props.vacationDetails.description}
-                            {...register("description",{
-                                required:true,
+                           {...register("description",{
+                                required: "* Description is required!",
                                 maxLength: {
                                     value: 190,
-                                    message: "Destination need to be less than 190 chars!"
+                                    message: "* Description need to be less than 190 chars!"
                                 }
                             })}
+                            onBlur={() => trigger("description")}
+                            error={!!errors.description}
+                            helperText={errors.description?.message}
                         /> 
-                        {errors.destination && <p className="myValidColor">{errors.destination.message}</p>}
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
@@ -126,9 +141,16 @@ function EditVacation(props:any): JSX.Element {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{       
+                                min: today,
+                            }}
+                            
                             {...register("start_date",{
-                                required:true
-                            })}
+                                required: "* Start date is required!"
+                            })}      
+                            onBlur={() => trigger("start_date")}
+                            error={!!errors.start_date}
+                            helperText={errors.start_date?.message}
                         />    
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -141,9 +163,15 @@ function EditVacation(props:any): JSX.Element {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{       
+                                min: today,
+                            }}
                             {...register("end_date",{
-                                required:true
+                                required: "* End date is required!"
                             })}
+                            onBlur={() => trigger("end_date")}
+                            error={!!errors.end_date}
+                            helperText={errors.end_date?.message}
                         />    
                     </Grid>
                     <Grid item xs={8}>
@@ -154,7 +182,12 @@ function EditVacation(props:any): JSX.Element {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                onChange={handleFile}
+                                 {...register("image", {
+                                    validate: validateImage,
+                                  })}
+                                onChange={handleFile}  
+                                error={!!errors.image}
+                                helperText={errors.image && <span>{errors.image.message?.toString()}</span>}    
                         />    
                     </Grid>
                     <Grid item xs={6}>
@@ -166,8 +199,15 @@ function EditVacation(props:any): JSX.Element {
                             id="price"
                             label="Enter a Price"
                             {...register("price",{
-                                required:true
+                                required: "* Price is required!",
+                                min:{
+                                    value: 1,
+                                    message: "* Price can't be negative or zero!"
+                                }
                             })}
+                            onBlur={() => trigger("price")}
+                            error={!!errors.price}
+                            helperText={errors.price?.message}
                         />
                     </Grid>
                     <Grid item xs={6}>

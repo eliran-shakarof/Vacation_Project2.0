@@ -19,7 +19,7 @@ const editVacation = async (vacation: Vacation): Promise<any> =>{
 }
 
 const deleteVacation = async (cardId: number,imageName: string): Promise<any> =>{
-    const axiosResponse = await JWTaxios.post(`/vacations/delete/${cardId}`,{data:{imageName}});
+    const axiosResponse = await JWTaxios.post(`/vacations/delete/${cardId}`,{imageName});
     return axiosResponse.data;
 }
 
