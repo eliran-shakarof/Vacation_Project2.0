@@ -4,9 +4,11 @@ import { RequestStatus } from "../Models/request-status";
 import { authRequests } from "../api/requests/auth";
 import { WithCallback } from "../Models/callback";
 import { UserCredentials } from "../Models/credentials-model";
-import  { userLogin, userLogout } from "./user-slice";
+import  { userLogin, userLogout, userRole } from "./user-slice";
 import notify from "../Utils/Notify";
 import { User } from "../Models/user";
+import { vacationsListAsync } from "./vacation-slice";
+import { getFollowListAsync } from "./following-slice";
 
 export interface AuthState {
     error?: string
@@ -20,10 +22,15 @@ const initialState: AuthState = {
 export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCallback<UserCredentials, string>, { dispatch, getState }) => {
     try{
       const response = await authRequests.login(userCred);
-
       dispatch(userLogin(response.headers.authorization)); 
+      
       const state = getState() as RootState;
       userCred.successCallback?.(state.user.firstName);
+      
+      dispatch(vacationsListAsync());
+      if(state.user.userRole === userRole.User){
+        dispatch(getFollowListAsync(state.user.userName));
+      }
       
     }catch(err:any){
        notify.error(`${err.response.data}`);

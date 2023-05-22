@@ -1,29 +1,23 @@
 import "./AdminHome.css";
 import AdminVacationCard from "../../Cards/AdminVacationCard/AdminVacationCard";
 import { NavLink } from "react-router-dom";
-import { useEffect, useState,ChangeEvent } from "react";
+import { useState,ChangeEvent } from "react";
 import {Button,Grid,Container, Pagination, Box, PaginationItem} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { selectUserState } from "../../../redux/user-slice";
-import { deleteVacationAsync, selectVacationsState, vacationsListAsync } from "../../../redux/vacation-slice";
+import { deleteVacationAsync, selectVacationsState } from "../../../redux/vacation-slice";
 
 const PER_PAGE = 6;
 
 function AdminHome(): JSX.Element {
   const dispatch = useAppDispatch();
-  const userState = useAppSelector(selectUserState);
   const { vacationsList } = useAppSelector(selectVacationsState);
 
   const [currentPage, setCurrentPage] = useState(0); 
   const pageCount = Math.ceil(vacationsList.length / PER_PAGE);
   const offset = currentPage * PER_PAGE;
-
-  useEffect(() => {   
-    dispatch(vacationsListAsync());
-  }, [userState.userRole,dispatch]);
-
 
   const deleteVacation = (vacation_id: number,imageName: string)=> {
       dispatch(deleteVacationAsync({vacation_id: vacation_id,imageName: imageName}));

@@ -1,29 +1,22 @@
 import "./Following.css";
-import { useEffect, useState,ChangeEvent } from "react";
+import { useState,ChangeEvent } from "react";
 import UserVacationCard from "../../Cards/UserVacationCard/UserVacationCard";
 import { Grid,Container, Box, Pagination } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { useAppSelector } from "../../../redux/store";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PaginationItem from "@mui/material/PaginationItem";
 import Typography from "@mui/material/Typography";
-import { getFollowListAsync, selectFollowingState } from "../../../redux/following-slice";
-import { selectUserState } from "../../../redux/user-slice";
+import { selectFollowingState } from "../../../redux/following-slice";
 
 const PER_PAGE = 6;
 
 function Following(): JSX.Element {
-    const dispatch = useAppDispatch();
-    const userState = useAppSelector(selectUserState);
     const { followingList } = useAppSelector(selectFollowingState);
 
     const [currentPage, setCurrentPage] = useState(0); 
     const pageCount = Math.ceil(followingList.length / PER_PAGE);
     const offset = currentPage * PER_PAGE;
-
-    useEffect(() => {
-        dispatch(getFollowListAsync(userState.userName));
-      }, [dispatch]);
 
       const isLiked = (vacation_id: number):boolean =>{
         return followingList.filter(item => item.vacation_id === vacation_id).length > 0;

@@ -11,18 +11,19 @@ import HomePage from "../../Pages/HomePage/HomePage";
 import Page404 from "../../Pages/ErrorPages/Page404/Page404";
 import Statistics from "../../Pages/Statistics/Statistics";
 import { ProtectedAdminRoleRoute } from "../../routes/protectedAdminRoleRoute";
+import { ProtectedUserRoleRoute } from "../../routes/protectedUserRoleRoute";
 import Forbidden from "../../Pages/ErrorPages/Forbidden/Forbidden";
 
 function Main(): JSX.Element {
     return (
         <div className="Main">
 			<Routes>
+                <Route path="/" element={<HomePage/>}/>
                 <Route path="/Login" element={<Login/>}/>
                 <Route path="/Register" element={<Register/>}/>
-                <Route path="/" element={<HomePage/>}/>
-                
-                <Route path="/" element={<ProtectedAdminRoleRoute />}>
-                    <Route path="/GuestHome" element={<GuestHome/>}/>
+                <Route path="/GuestHome" element={<GuestHome/>}/>
+
+                <Route path="/" element={<ProtectedUserRoleRoute/>}>
                     <Route path="/UserHome" element={<UserHome/>}/>
                     <Route path="/Following" element={<Following/>}/>
                 </Route> 

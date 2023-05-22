@@ -16,19 +16,11 @@ function Header(): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
     const { followingList } = useAppSelector(selectFollowingState);
-    const [currUserRole, setCurrUserRole] = useState(userState.userRole);
-    const [firstName,setFirstName] = useState(userState.firstName);
-
-    useEffect(()=>{
-        setCurrUserRole(userState.userRole);
-        setFirstName(userState.firstName);
-    },[userState])
 
     const makeLogout = () =>{
        dispatch(userLogout());
     }
-
-    
+   
     return (
         <div className="Header">
          <Box>
@@ -41,9 +33,9 @@ function Header(): JSX.Element {
                     </Typography>
                 </Box>
                 <Box sx={{ flexGrow : 1 }}>
-                    {currUserRole !== userRole.Guest &&
+                    {userState.userRole !== userRole.Guest &&
                         <Typography variant="body1" component="div" className="helloMe" >
-                                Hello, {firstName}
+                                Hello, {userState.firstName}
                         </Typography> 
                     }
                 </Box>    
@@ -56,7 +48,7 @@ function Header(): JSX.Element {
                 </Box>
                 <Box>
                     {   
-                        currUserRole === userRole.Guest ?
+                        userState.userRole === userRole.Guest ?
                             <span>
                                 <NavLink to="/Login">
                                     <Button variant="contained" disableElevation>Login</Button>
@@ -64,7 +56,7 @@ function Header(): JSX.Element {
                             </span>
                         :
                         
-                        currUserRole === userRole.User ?
+                        userState.userRole === userRole.User ?
                             <span>
                                 <NavLink to="/Following">
                                     <Button variant="contained" disableElevation>
@@ -91,7 +83,7 @@ function Header(): JSX.Element {
                     }
                 </Box>
                 <Box>
-                    {currUserRole !== userRole.Guest &&
+                    {userState.userRole !== userRole.Guest &&
                         <Button variant="contained" disableElevation onClick={makeLogout}>Logout</Button>
                     }
                 </Box>

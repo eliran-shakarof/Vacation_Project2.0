@@ -10,19 +10,14 @@ import { selectUserState, userRole } from "../../../redux/user-slice";
 
 function HomePage(): JSX.Element {
     const userState = useAppSelector(selectUserState); 
-    const [currUserRole, setCurrUserRole] = useState(userState.userRole);
-
-    useEffect(()=>{
-        setCurrUserRole(userState.userRole);
-    },[userState])
-    
+   
     return (
         <div className="HomePage">
             <Box>
                 {
-                    currUserRole === userRole.Admin ? <AdminHome/> 
+                    userState.userRole === userRole.Admin ? <AdminHome/> 
                     :
-                    currUserRole === userRole.User ? <UserHome/>
+                    userState.userRole === userRole.User ? <UserHome/>
                     :
                     <GuestHome/>
                 }
