@@ -17,11 +17,7 @@ function Following(): JSX.Element {
     const [currentPage, setCurrentPage] = useState(0); 
     const pageCount = Math.ceil(followingList.length / PER_PAGE);
     const offset = currentPage * PER_PAGE;
-
-      const isLiked = (vacation_id: number):boolean =>{
-        return followingList.filter(item => item.vacation_id === vacation_id).length > 0;
-    }
-    
+      
     const handleChangePage = (event: ChangeEvent<unknown> | null, page: number): void => {
       setCurrentPage(page - 1);
     };
@@ -29,7 +25,7 @@ function Following(): JSX.Element {
    const currentPageData = followingList.slice(offset, offset + PER_PAGE)
       .map((card) => (
         <Grid item key={card.vacation_id} xs={12} sm={6} md={4}>
-            <UserVacationCard cardDetails={{...card}} cardsLikes={isLiked(card.vacation_id)}/>
+            <UserVacationCard cardDetails={{...card}} isCardLike={true}/>
         </Grid>
       ))
 

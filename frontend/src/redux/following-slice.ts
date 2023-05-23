@@ -8,6 +8,11 @@ import { Following } from "../Models/following";
 import { WithCallback } from "../Models/callback";
 import { decreaseVacationFollow, increaseVacationFollow } from "./vacation-slice";
 
+export interface IAddFollow{
+    follow: Following;
+    vacation: Vacation;
+}
+
 export interface followingState {
     followingList: Vacation[]
     error?: string
@@ -29,11 +34,11 @@ export const getFollowListAsync = createAsyncThunk('following/all_for', async (u
     }
 })
 
-export const addNewFollowAsync = createAsyncThunk('following/add', async (newFollow:WithCallback<Following>, { dispatch }) => {
+export const addNewFollowAsync = createAsyncThunk('following/add', async (newFollow:WithCallback<IAddFollow>, { dispatch }) => {
     try{
-        const response = await followingApiRequest.addNewFollow(newFollow);
-        dispatch(increaseVacationFollow({vacation_id: newFollow.vacation_id}));
-        return response;
+        await followingApiRequest.addNewFollow(newFollow.follow);
+        dispatch(increaseVacationFollow({vacation_id: newFollow.follow.vacation_id}));
+        return newFollow;
     }catch(err:any){
         notify.error(`${err.response.data}`);    
         newFollow.failureCallback?.();
@@ -44,7 +49,7 @@ export const deleteFollowAsync = createAsyncThunk('following/delete', async (fol
     try{
         await followingApiRequest.deleteFollow(follow);
         dispatch(decreaseVacationFollow({vacation_id: follow.vacation_id}));
-        return follow;
+        return follow.vacation_id;
     }catch(err:any){
         notify.error(`${err.response.data}`);
         follow.failureCallback?.();
@@ -73,9 +78,9 @@ export const followingSlice = createSlice({
         .addCase(addNewFollowAsync.pending, state => {
             state.status = RequestStatus.Loading
         })
-        .addCase(addNewFollowAsync.fulfilled, (state, action) => {
+        .addCase(addNewFollowAsync.fulfilled, (state, action:any) => {
             state.status = RequestStatus.Idle
-            state.followingList = [...state.followingList,action.payload];
+            state.followingList = [...state.followingList,action.payload.vacation];
         })
         .addCase(addNewFollowAsync.rejected, (state, action) => {
             state.error = action.error.message
@@ -86,7 +91,7 @@ export const followingSlice = createSlice({
         })
         .addCase(deleteFollowAsync.fulfilled, (state, action) => {
             state.status = RequestStatus.Idle
-            state.followingList = state.followingList.filter((vacation)=> vacation.vacation_id !== action.payload?.vacation_id);
+            state.followingList = state.followingList.filter((vacation)=> vacation.vacation_id !== action.payload);
         })
         .addCase(deleteFollowAsync.rejected, (state, action) => {
             state.error = action.error.message
@@ -96,5 +101,5 @@ export const followingSlice = createSlice({
 })
 
 
-export const selectFollowingState = (state: RootState) => state.followingList;
+export const selectFollowingState = (state: RootState) => state.following;
 export const FollowingReducer = followingSlice.reducer

@@ -5,15 +5,12 @@ import { userReducer } from "./user-slice";
 import { vacationsReducer } from "./vacation-slice";
 import { FollowingReducer } from "./following-slice";
 
-
-//export const store = configureStore({ reducer: reducers });
-
 export const store = configureStore({ 
     reducer:{
         auth: authReducer,
         user: userReducer,
-        vacationsList: vacationsReducer,
-        followingList: FollowingReducer,
+        vacations: vacationsReducer,
+        following: FollowingReducer,
     }
 });
 

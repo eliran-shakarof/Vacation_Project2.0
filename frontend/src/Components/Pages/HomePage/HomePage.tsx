@@ -1,5 +1,4 @@
 import "./HomePage.css";
-import { useState, useEffect } from "react";
 import { useAppSelector } from "../../../redux/store";
 import GuestHome from "../GuestHome/GuestHome";
 import { Box } from "@mui/material";

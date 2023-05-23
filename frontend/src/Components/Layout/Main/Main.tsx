@@ -15,6 +15,7 @@ import { ProtectedUserRoleRoute } from "../../routes/protectedUserRoleRoute";
 import Forbidden from "../../Pages/ErrorPages/Forbidden/Forbidden";
 
 function Main(): JSX.Element {
+    
     return (
         <div className="Main">
 			<Routes>
@@ -22,12 +23,12 @@ function Main(): JSX.Element {
                 <Route path="/Login" element={<Login/>}/>
                 <Route path="/Register" element={<Register/>}/>
                 <Route path="/GuestHome" element={<GuestHome/>}/>
-
+                
                 <Route path="/" element={<ProtectedUserRoleRoute/>}>
                     <Route path="/UserHome" element={<UserHome/>}/>
                     <Route path="/Following" element={<Following/>}/>
                 </Route> 
-
+                
                 <Route path="/" element={<ProtectedAdminRoleRoute />}>
                     <Route path="/AdminHome" element={<AdminHome/>}/>
                     <Route path="/AddVacation" element={<AddVacation/>}/>

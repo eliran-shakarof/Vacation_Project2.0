@@ -4,7 +4,6 @@ import { selectUserState, userRole } from '../../redux/user-slice';
 
 export const ProtectedUserRoleRoute = () => {
     const user = useAppSelector(selectUserState)
-  
-    return user.userRole === userRole.User ? <Outlet /> : <Navigate to={"/forbidden"} replace />
+    return user && user.userRole === userRole.User ? <Outlet /> : <Navigate to={"/forbidden"} replace />
 }
   

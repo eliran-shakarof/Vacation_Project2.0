@@ -6,35 +6,42 @@ import { useEffect,useState } from "react";
 import { useAppDispatch, useAppSelector } from "./redux/store";
 import { useNavigate } from "react-router-dom";
 import { Typography,Box,Modal} from '@mui/material';
-import { selectUserState } from './redux/user-slice';
-import { relogAsync } from './redux/auth-slice';
+import { selectUserState, userRole } from './redux/user-slice';
+import { relogAsync, selectAuthState } from './redux/auth-slice';
+import { RequestStatus } from './Models/request-status';
 
 function App() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const userState = useAppSelector(selectUserState);
+  const userState = useAppSelector(selectUserState); 
+  const { status } = useAppSelector(selectAuthState)  
 
   useEffect(()=>{
-    if(localStorage.getItem("userToken") && !userState.userToken){    
       dispatch(relogAsync({failureCallback: failureRelog}))
-    }
-  },[navigate,dispatch,userState.userToken])
-
+  },[navigate,dispatch])
+  
   const failureRelog = () =>{  
-      handleOpen();
-      navigate("/Login");
+    handleOpen();
+    navigate("/Login");
+  }
+  
+  console.log(userState);
+  console.log(status);
+  
+  if (status === RequestStatus.Loading) {    
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="App">
-      <header><Header/></header>
-      <main><Main/></main>
-      <footer><Footer/></footer>
-
+        <header><Header/></header>
+        <main><Main/></main>
+        <footer><Footer/></footer>
+      
       <Modal
         open={open}
         onClose={handleClose}

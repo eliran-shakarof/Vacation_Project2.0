@@ -12,12 +12,12 @@ import { addNewFollowAsync, deleteFollowAsync } from "../../../redux/following-s
 function UserVacationCard(props:any): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
-
+ 
     const getLiked = () =>{        
         const follow = new Following(0, userState.userName, props.cardDetails.vacation_id);
-        if(props.cardsLikes === false){   
+        if(props.isCardLike === false){   
             //Be Liked
-            dispatch(addNewFollowAsync({...follow}));
+            dispatch(addNewFollowAsync({follow: {...follow},vacation:props.cardDetails}));
         }else{
             //Be unLiked
             dispatch(deleteFollowAsync({...follow}));     
@@ -27,7 +27,7 @@ function UserVacationCard(props:any): JSX.Element {
     const userIcons = () =>{
       return(
         <IconButton onClick={()=>{getLiked()}}>
-          {(props.cardsLikes === true) ? <FavoriteIcon color="primary"/> : <FavoriteBorderIcon color="primary"/>}
+          {(props.isCardLike === true) ? <FavoriteIcon color="primary"/> : <FavoriteBorderIcon color="primary"/>}
         </IconButton>
       );
     }

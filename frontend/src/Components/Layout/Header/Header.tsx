@@ -1,9 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { AppBar, Badge, Box, Button, Toolbar, Typography } from "@mui/material";
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useState, useEffect } from "react";
 import { userRole } from "../../../redux/user-slice";
 import HomeIcon from '@mui/icons-material/Home';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -16,9 +15,11 @@ function Header(): JSX.Element {
     const dispatch = useAppDispatch();
     const userState = useAppSelector(selectUserState);
     const { followingList } = useAppSelector(selectFollowingState);
+    const navigate = useNavigate();
 
     const makeLogout = () =>{
        dispatch(userLogout());
+       navigate("/")
     }
    
     return (
@@ -26,8 +27,8 @@ function Header(): JSX.Element {
          <Box>
          <AppBar position="static" >
             <Toolbar>
-                <TravelExploreIcon sx={{mr: 1}}/>
-                <Box sx={{mr: 5}}>
+                <TravelExploreIcon sx={{ mr: 1 }}/>
+                <Box sx={{ mr: 5 }}>
                     <Typography variant="h6" component="div">
                         <NavLink to="/"> Vacation Finder</NavLink>
                     </Typography>

@@ -139,6 +139,6 @@ export const addNewVacationAsync = createAsyncThunk('vacations/add', async (newV
 
   
   
-export const selectVacationsState = (state: RootState) => state.vacationsList;
+export const selectVacationsState = (state: RootState) => state.vacations;
 export const { increaseVacationFollow, decreaseVacationFollow } = vacationsSlice.actions;
 export const vacationsReducer = vacationsSlice.reducer

@@ -16,7 +16,7 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-    status: RequestStatus.Idle,
+    status: RequestStatus.Loading,
 }
 
 export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCallback<UserCredentials, string>, { dispatch, getState }) => {
@@ -26,14 +26,36 @@ export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCal
       
       const state = getState() as RootState;
       userCred.successCallback?.(state.user.firstName);
-      
-      dispatch(vacationsListAsync());
+
+      //If I logged with user i already make request for follow list
       if(state.user.userRole === userRole.User){
         dispatch(getFollowListAsync(state.user.userName));
       }
-      
     }catch(err:any){
        notify.error(`${err.response.data}`);
+    }
+  },
+)
+
+export const relogAsync = createAsyncThunk('auth/relog', async (user:WithCallback<{}>, { dispatch, getState }) => {
+    if(localStorage.getItem("userToken")){   
+      try{
+        const response = await authRequests.relog();
+        dispatch(userLogin(response.headers.authorization)); 
+        dispatch(vacationsListAsync());
+        const state = getState() as RootState;
+
+        //If I logged with user i already make request for follow list
+        if(state.user.userRole === userRole.User){
+          dispatch(getFollowListAsync(state.user.userName));
+        }
+      }catch(err:any){
+        dispatch(userLogout());
+        user.failureCallback?.();
+      }
+    }else{
+      const state = getState() as RootState;
+      state.auth.status = RequestStatus.Idle;
     }
   },
 )
@@ -52,18 +74,6 @@ export const registerAsync = createAsyncThunk('auth/register', async (newUser:Wi
   },
 )
 
-export const relogAsync = createAsyncThunk('auth/relog', async (user:WithCallback<{}>, { dispatch }) => {
-    try{
-      const response = await authRequests.relog();
-      dispatch(userLogin(response.headers.authorization)); 
-      
-    }catch(err:any){
-      dispatch(userLogout());
-      user.failureCallback?.();
-    }
-  },
-)
-
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -75,11 +85,27 @@ export const authSlice = createSlice({
       .addCase(loginAsync.pending, state => {
         state.status = RequestStatus.Loading
       })
+      .addCase(loginAsync.fulfilled, (state, action) => {
+        state.status = RequestStatus.Idle
+      })
       .addCase(loginAsync.rejected, (state, action) => {
         state.error = action.error.message
         state.status = RequestStatus.Failed
       })
+      
 
+      .addCase(relogAsync.pending, state => {
+        state.status = RequestStatus.Loading
+      })
+      .addCase(relogAsync.fulfilled, (state, action) => {
+        state.status = RequestStatus.Idle
+        console.log(state.status )
+      })
+      .addCase(relogAsync.rejected, (state, action) => {
+        state.error = action.error.message
+        state.status = RequestStatus.Failed
+      })
+     
   },
 })
 

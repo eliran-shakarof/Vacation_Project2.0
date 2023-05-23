@@ -30,6 +30,7 @@ const addNewFollowing = async(newFollowing: Following): Promise<Following> => {
     const response : OkPacket = await dal.execute(sql);
     newFollowing.id = response.insertId;
     await dal.execute(sql2);
+    
     return newFollowing;
 }
 
