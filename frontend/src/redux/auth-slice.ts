@@ -84,18 +84,6 @@ export const authSlice = createSlice({
   
   extraReducers: builder => {
     builder
-      .addCase(loginAsync.pending, state => {
-        state.status = RequestStatus.Loading
-      })
-      .addCase(loginAsync.fulfilled, (state, action) => {
-        state.status = RequestStatus.Idle
-      })
-      .addCase(loginAsync.rejected, (state, action) => {
-        state.error = action.error.message
-        state.status = RequestStatus.Failed
-      })
-      
-
       .addCase(relogAsync.pending, state => {
         state.status = RequestStatus.Loading
       })

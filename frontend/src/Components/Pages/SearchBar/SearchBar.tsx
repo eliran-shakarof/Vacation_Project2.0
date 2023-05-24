@@ -16,14 +16,11 @@ function SearchBar(props: any): JSX.Element {
           vacation.destination.toLowerCase().includes(term.toLowerCase())
         );
       
-        if (term.length > 0) {
-          props.setSearchResults(results);
-        } else {
-          props.setSearchResults(props.vacationsList);
-        }
+        console.log(results)
+        props.setSearchResults(results);
+        props.setCurrentPage(1); 
       };
       
-
     return (
         <div className="SearchBar">
 			 <TextField

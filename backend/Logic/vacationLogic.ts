@@ -56,7 +56,7 @@ const addNewVacation = async (newVacation: Vacation): Promise<Vacation> => {
 
 const deleteVacation = async (id: number): Promise<void> => {
     const sql = `DELETE FROM vacations_db.vacations WHERE vacation_id = ${id}`
-    const response = await dal.execute(sql);
+    await dal.execute(sql);
 }
 
 const updateVacation = async (vacation: Vacation): Promise<Vacation> => {
@@ -79,7 +79,7 @@ const updateVacation = async (vacation: Vacation): Promise<Vacation> => {
         sumFollowers = ${vacation.sumFollowers}
         WHERE vacation_id = ${vacation.vacation_id}
     `;
-
+    console.log(sql);
     delete vacation.image;
     const response : OkPacket = await dal.execute(sql);
     return vacation;

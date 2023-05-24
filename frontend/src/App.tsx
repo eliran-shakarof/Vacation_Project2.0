@@ -21,8 +21,9 @@ function App() {
   const { status } = useAppSelector(selectAuthState)  
 
   useEffect(()=>{
+      console.log("itamar")
       dispatch(relogAsync({failureCallback: failureRelog}))
-  },[navigate,dispatch])
+  },[dispatch])
   
   const failureRelog = () =>{  
     handleOpen();
@@ -32,7 +33,6 @@ function App() {
   if (status === RequestStatus.Loading) {    
       return(
         <>
-          <div><Header/></div>
           <div className="loadingCircle"><CircularProgress /></div>
         </>
       )
