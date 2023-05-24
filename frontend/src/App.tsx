@@ -9,6 +9,7 @@ import { Typography,Box,Modal} from '@mui/material';
 import { selectUserState, userRole } from './redux/user-slice';
 import { relogAsync, selectAuthState } from './redux/auth-slice';
 import { RequestStatus } from './Models/request-status';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -17,7 +18,6 @@ function App() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const userState = useAppSelector(selectUserState); 
   const { status } = useAppSelector(selectAuthState)  
 
   useEffect(()=>{
@@ -29,11 +29,13 @@ function App() {
     navigate("/Login");
   }
   
-  console.log(userState);
-  console.log(status);
-  
   if (status === RequestStatus.Loading) {    
-    return <div>Loading...</div>;
+      return(
+        <>
+          <div><Header/></div>
+          <div className="loadingCircle"><CircularProgress /></div>
+        </>
+      )
   }
 
   return (

@@ -38,11 +38,13 @@ export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCal
 )
 
 export const relogAsync = createAsyncThunk('auth/relog', async (user:WithCallback<{}>, { dispatch, getState }) => {
-    if(localStorage.getItem("userToken")){   
+    dispatch(vacationsListAsync());//request for vacation list when the application up
+
+    //checking if there is user that logged before
+    if(localStorage.getItem("userToken")){ 
       try{
         const response = await authRequests.relog();
         dispatch(userLogin(response.headers.authorization)); 
-        dispatch(vacationsListAsync());
         const state = getState() as RootState;
 
         //If I logged with user i already make request for follow list
@@ -99,7 +101,7 @@ export const authSlice = createSlice({
       })
       .addCase(relogAsync.fulfilled, (state, action) => {
         state.status = RequestStatus.Idle
-        console.log(state.status )
+        
       })
       .addCase(relogAsync.rejected, (state, action) => {
         state.error = action.error.message
