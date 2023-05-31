@@ -12,12 +12,35 @@ import { getFollowListAsync } from "./following-slice";
 
 export interface AuthState {
     error?: string
-    status: RequestStatus
+    status: RequestStatus,
+    googleStatus: RequestStatus
 }
 
 const initialState: AuthState = {
     status: RequestStatus.Loading,
+    googleStatus: RequestStatus.Idle
 }
+
+export const googleLoginAsync = createAsyncThunk('auth/googleLogin', async (token:WithCallback<any ,string>, { dispatch, getState }) => {
+    try{
+      const response = await authRequests.googleLogin(token);
+      console.log(response.headers.authorization);
+      dispatch(userLogin(response.headers.authorization)); 
+      
+      const state = getState() as RootState;
+      token.successCallback?.(state.user.firstName);
+
+      //If I logged with user i make request for follow list
+      if(state.user.userRole === userRole.User){
+        dispatch(getFollowListAsync(state.user.userName));
+      }
+    }catch(err:any){
+       notify.error(`${err.response.data}`);
+    }
+  },
+)
+    
+
 
 export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCallback<UserCredentials, string>, { dispatch, getState }) => {
     try{
@@ -26,7 +49,7 @@ export const loginAsync = createAsyncThunk('auth/login', async (userCred:WithCal
       
       const state = getState() as RootState;
       userCred.successCallback?.(state.user.firstName);
-
+      
       //If I logged with user i already make request for follow list
       if(state.user.userRole === userRole.User){
         dispatch(getFollowListAsync(state.user.userName));
@@ -92,6 +115,17 @@ export const authSlice = createSlice({
         
       })
       .addCase(relogAsync.rejected, (state, action) => {
+        state.error = action.error.message
+        state.status = RequestStatus.Failed
+      })
+      .addCase(googleLoginAsync.pending, state => {
+        state.status = RequestStatus.Loading
+      })
+      .addCase(googleLoginAsync.fulfilled, (state, action) => {
+        state.status = RequestStatus.Idle
+        
+      })
+      .addCase(googleLoginAsync.rejected, (state, action) => {
         state.error = action.error.message
         state.status = RequestStatus.Failed
       })

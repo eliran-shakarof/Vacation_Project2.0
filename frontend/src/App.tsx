@@ -21,7 +21,6 @@ function App() {
   const { status } = useAppSelector(selectAuthState)  
 
   useEffect(()=>{
-      console.log("itamar")
       dispatch(relogAsync({failureCallback: failureRelog}))
   },[dispatch])
   

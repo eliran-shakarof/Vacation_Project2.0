@@ -19,8 +19,14 @@ const relog = async (): Promise<any> => {
     return apiResponse;
 }
 
+const googleLogin = async (token:any): Promise<any> =>{
+    const apiResponse = await JWTaxios.post("/auth/api/v1/auth/google",token);
+    return apiResponse;
+}
+
 export const authRequests = {
     login,
     register,
-    relog
+    relog,
+    googleLogin
 }

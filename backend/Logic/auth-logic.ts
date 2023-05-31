@@ -6,6 +6,53 @@ import { OkPacket } from "mysql";
 import { UserCredentials } from "../Models/credentials-model";
 import jwtHelper from '../Utils/jwt-helper';
 import cryptoHelper from '../Utils/crypto-helper';
+import Role from '../Models/role';
+
+const googleAsync = async (email: any, given_name:string, family_name:string): Promise<string> =>{
+    const user = new User();
+    user.first_name = given_name;
+    user.last_name = family_name;
+    user.user_name = email;
+
+    const alreadyExists = await checkUserName(email);
+    if(alreadyExists){
+        const sql1 = `
+        SELECT role FROM vacations_db.users 
+        WHERE users.user_name = '${user.user_name}'
+        `;
+
+        const sql2 = `
+        UPDATE vacations_db.users
+        SET first_name = '${user.first_name}',
+        last_name = '${user.last_name}'
+        WHERE user_name = '${user.user_name}'
+        `;
+        const results = await dal.execute(sql1);
+        await dal.execute(sql2);
+        
+        user.role = results[0].role;
+        const token = jwtHelper.getNewToken(user);
+        return token;
+
+    }else{
+        user.unique_id = uuid();
+        user.role = Role.User;
+        const sql = `
+            INSERT INTO vacations_db.users VALUES
+            (DEFAULT,
+            '${user.unique_id}',
+            '${user.first_name}',
+            '${user.last_name}',
+            '${user.user_name}',
+            '${user.password}',
+            ${user.role})
+        `
+        await dal.execute(sql)
+        const token = jwtHelper.getNewToken(user);
+        console.log(token);
+        return token;
+    }        
+}
 
 const registerAsync = async (newUser: User): Promise<string> => {
     const isTaken = await checkUserName(newUser.user_name);
@@ -65,10 +112,6 @@ const loginAsync = async (userCred: UserCredentials): Promise<string> => {
 }
 
 const relogUser = async (token: string): Promise<string> => {
-    // const isValid = await jwtHelper.verifyTokenAsync((token) as any);
-    // if(!isValid){
-    //     throw new ClientError(401, "Invalid or expired token");
-    // }else{
         const oldUser: User = jwtHelper.getUserFromToken(token);
         const sql = `
             SELECT * FROM vacations_db.users
@@ -91,12 +134,12 @@ const relogUser = async (token: string): Promise<string> => {
             const token = jwtHelper.getNewToken(updatedUser[0]);
             return token;
         }
-    // }
 }
 
 
 export default {
     registerAsync,
     loginAsync,
-    relogUser
+    relogUser,
+    googleAsync
 }

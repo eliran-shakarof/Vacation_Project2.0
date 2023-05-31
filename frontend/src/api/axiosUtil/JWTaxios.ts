@@ -5,7 +5,7 @@ const JWTaxios = axios.create({
     headers: {
       Accept: 
       'application/json',
-      'Content-Type': 'application/json; multipart/form-data'
+      'Content-Type': 'application/json;'
     },
     validateStatus: status => status >= StatusCodes.OK && status < StatusCodes.BAD_REQUEST,
 });

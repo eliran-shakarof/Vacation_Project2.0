@@ -1,7 +1,7 @@
 import "./Login.css";
 import { NavLink,useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserCredentials } from "../../../Models/credentials-model";
 import notify from "../../../Utils/Notify";
 import { Avatar,Button,TextField,IconButton,InputAdornment,Grid,Typography } from "@mui/material";
@@ -9,13 +9,28 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useAppDispatch } from "../../../redux/store"
-import { loginAsync } from "../../../redux/auth-slice";
-
+import { googleLoginAsync, loginAsync } from "../../../redux/auth-slice";
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState<Boolean>(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    /* global google */
+    /*@ts-ignore*/
+    google.accounts.id.initialize({
+      client_id: "52640252805-7lhae7grtmjj2atnb1555vmk41e001i5.apps.googleusercontent.com",
+      callback: handleCallbackResponse
+    })
+
+    /*@ts-ignore*/
+    google.accounts.id.renderButton(
+      document.getElementById("signInDiv"),
+      { theme: "outline", size:"large"}
+    );
+  },[])
+
 
   const {
       register,
@@ -24,7 +39,11 @@ function Login(): JSX.Element {
       trigger,
   } = useForm<UserCredentials>();
 
- 
+  const handleCallbackResponse = async (response:any) =>{
+    const token = response.credential;
+    dispatch(googleLoginAsync({token, successCallback: loginSuccess}));
+  }
+
   const send = async (userCred: UserCredentials) =>{
     dispatch(loginAsync({...userCred, successCallback: loginSuccess}));
   }
@@ -34,7 +53,7 @@ function Login(): JSX.Element {
     navigate("/");
   }
 
-    return (
+  return (
       <div className="Login">
         <div className="loginBox">
           <form onSubmit={handleSubmit(send)}>
@@ -48,11 +67,11 @@ function Login(): JSX.Element {
                 Sign in
               </Typography>
 
-              <TextField 
-                  margin="normal" 
-                  fullWidth 
-                  label="Email Address" 
-                  
+              <TextField
+                  margin="normal"
+                  fullWidth
+                  label="Email Address"
+
                   {... register("user_name",{
                     required: "* Email is required!",
                     pattern:{
@@ -64,14 +83,13 @@ function Login(): JSX.Element {
                   error={!!errors.user_name}
                   helperText={errors.user_name?.message}
                 />
-               {/* {errors.user_name && <p className="myInvalidColor">{errors.user_name.message}</p>} */}
 
-              <TextField 
-                  margin="normal" 
+              <TextField
+                  margin="normal"
                   fullWidth
-                  label="Password" 
+                  label="Password"
                   type={!showPassword ? "password" : "text"}
-                  
+
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -81,7 +99,7 @@ function Login(): JSX.Element {
                       </InputAdornment>
                     ),
                   }}
-                  
+
                   {... register("password",{
                     required: "* Password is required!",
                     minLength:{
@@ -93,11 +111,12 @@ function Login(): JSX.Element {
                   error={!!errors.password}
                   helperText={errors.password?.message}
                 />
-              {/* {errors.password && <p className="myInvalidColor">{errors.password.message}</p>} */}
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Sign In
               </Button>
+
+              <div id="signInDiv"></div>
 
               <Grid container>
                 <Grid item>
